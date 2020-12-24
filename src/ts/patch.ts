@@ -178,3 +178,31 @@ function optimizationForClasses(currentVNode: IVNode, newVNode: IVNode): void {
     }
   });
 }
+
+/**
+ * This function checks the difference between the new virtual node and the current.
+ *
+ * @param { IVNode } currentVNode - A virtual node that was added to the real DOM using
+ *   the mount function.
+ *
+ * @param { IVNode } newVNode - New virtual node to change the previous one.
+ *
+ * @throws Throws an error if the current virtual node has not been added to
+ *   the current DOM using the mount function
+ *
+ * @returns { void } This function returns nothing.
+ */
+export default function patch(currentVNode: IVNode, newVNode: IVNode): void {
+  if (currentVNode.$el === undefined) {
+    throw new Error(
+      'First insert the virtual node into the dom using the mount function and then use this function',
+    );
+  }
+
+  newVNode.$el = currentVNode.$el;
+
+  optimizationForSimpleAttributes(currentVNode, newVNode);
+  optimizationForClasses(currentVNode, newVNode);
+  optimizationForEvents(currentVNode, newVNode);
+  optimizationForStyles(currentVNode, newVNode);
+}
