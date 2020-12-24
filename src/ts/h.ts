@@ -87,3 +87,35 @@ function transformChildrenForVNode(children: THChildren): TVNodeChildren {
 
   return transformChildren;
 }
+
+/**
+ * This function creates a virtual node than can then be inserted into a real dom
+ *   through the mount function.
+ *
+ * @param {TVNodeTagName} tag - Html element name.
+ * @param {(IHProps|null)}  props - Props for html element.
+ * @param {(THChildren|null)} children - Children for the html element.
+ * @returns {IVNode} A virtual node.
+ */
+export default function h(
+  tag: TVNodeTagName,
+  props: IHProps | null,
+  children: THChildren | null,
+): IVNode {
+  const simpleAttrs = transformSimpleAttrsForVNode(props?.simpleAttrs);
+  const classes = transformClassesForVNode(props?.classes);
+  const events = transformEventsForVNode(props?.events);
+  const styles = transformStylesForVNode(props?.styles);
+  const tChildren = transformChildrenForVNode(children || '');
+
+  return {
+    tag,
+    props: {
+      simpleAttrs,
+      classes,
+      events,
+      styles,
+    },
+    children: tChildren,
+  };
+}
