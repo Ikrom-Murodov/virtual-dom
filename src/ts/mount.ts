@@ -21,7 +21,7 @@ export function mount(vNode: IVNode, container: HTMLElement): void {
  * @param {IVNode} vNode - you can create virtual node with h function.
  * @returns {HTMLElement}
  */
-export default function createHtmlElementFromVNode(vNode: IVNode): HTMLElement {
+export function createHtmlElementFromVNode(vNode: IVNode): HTMLElement {
   const el = document.createElement(vNode.tag);
 
   // Adding events to the html element.
@@ -49,10 +49,11 @@ export default function createHtmlElementFromVNode(vNode: IVNode): HTMLElement {
   // Adding children to the html element.
   if (typeof vNode.children === 'string') el.textContent = vNode.children;
   else if (Array.isArray(vNode.children)) {
-    // This logic will be implemented later
-  } else {
-    // This logic will be implemented later
-  }
+    vNode.children.forEach((child) => {
+      if (child instanceof Text) el.append(child);
+      else mount(child, el);
+    });
+  } else mount(vNode.children, el);
 
   return el;
 }
