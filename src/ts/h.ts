@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/indent */
 import {
   IHProps,
   IVNode,
@@ -27,4 +28,22 @@ function transformClassesForVNode(
   classes: IHProps['classes'],
 ): IVNodeProps['classes'] {
   return new Set<string>(classes || []);
+}
+
+/**
+ * This function transform events for a virtual dom.
+ * @param {IHProps['events']} events - Events to be added to the html element.
+ * @returns {IVNodeProps['events']}
+ */
+function transformEventsForVNode(
+  events: IHProps['events'] = {},
+): IVNodeProps['events'] {
+  const transformEvents = new Map<
+    keyof GlobalEventHandlersEventMap,
+    EventListener
+  >();
+
+  const keys = Object.keys(events) as Array<keyof GlobalEventHandlersEventMap>;
+  keys.forEach((key) => transformEvents.set(key, events[key] as EventListener));
+  return transformEvents;
 }
