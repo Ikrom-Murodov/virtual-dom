@@ -1,5 +1,7 @@
+/* eslint-disable operator-linebreak */
 /* eslint-disable no-param-reassign */
 import { IVNode } from './interfaces';
+import { createHtmlElementFromVNode, mount } from './mount';
 
 /**
  * This function removes events that are not in the new virtual node.
@@ -200,6 +202,75 @@ export default function patch(currentVNode: IVNode, newVNode: IVNode): void {
   }
 
   newVNode.$el = currentVNode.$el;
+
+  const currentChildren = currentVNode.children;
+  const newChildren = newVNode.children;
+
+  if (typeof currentChildren === 'string' && typeof newChildren === 'string') {
+    if (currentChildren !== newChildren) newVNode.$el.textContent = newChildren;
+  } else if (Array.isArray(currentChildren) && Array.isArray(newChildren)) {
+    [...currentVNode.$el.childNodes]
+      .splice(newChildren.length)
+      .forEach((child) => child.remove());
+
+    newChildren.forEach((newChild, index) => {
+      const currentChild = currentVNode.$el?.childNodes[index];
+
+      if (currentChild) {
+        if (newChild instanceof Text) {
+          if (currentChild instanceof Text) {
+            if (currentChild.textContent !== newChild.textContent) {
+              currentChild.replaceWith(newChild);
+            }
+          } else currentChild.replaceWith(newChild);
+        } else if (currentChild instanceof Text) {
+          const newHtmlElement = createHtmlElementFromVNode(newChild);
+          currentChild.replaceWith(newHtmlElement);
+        } else patch(currentChildren[index] as IVNode, newChild);
+      } else if (newChild instanceof Text) newVNode.$el?.append(newChild);
+      else mount(newChild, newVNode.$el!);
+    });
+  } else if (
+    Array.isArray(currentChildren) &&
+    typeof newChildren === 'string'
+  ) {
+    newVNode.$el.textContent = newChildren;
+  } else if (
+    typeof currentChildren === 'string' &&
+    Array.isArray(newChildren)
+  ) {
+    newVNode.$el.textContent = '';
+    newChildren.forEach((child) => {
+      if (child instanceof Text) newVNode.$el?.append(child);
+      else mount(child, newVNode.$el!);
+    });
+  } else if (
+    typeof currentChildren === 'object' &&
+    Array.isArray(newChildren)
+  ) {
+    (currentChildren as IVNode).$el?.remove();
+    newChildren.forEach((child) => {
+      if (child instanceof Text) newVNode.$el?.append(child);
+      else mount(child, newVNode.$el!);
+    });
+  } else if (
+    Array.isArray(currentChildren) &&
+    typeof newChildren === 'object'
+  ) {
+    currentVNode.$el.textContent = '';
+    mount(newChildren as IVNode, currentVNode.$el!);
+  } else if (
+    typeof currentChildren === 'string' &&
+    typeof newChildren === 'object'
+  ) {
+    currentVNode.$el.textContent = '';
+    mount(newChildren as IVNode, currentVNode.$el);
+  } else if (
+    typeof currentChildren === 'object' &&
+    typeof newChildren === 'string'
+  ) {
+    currentVNode.$el.textContent = newChildren;
+  }
 
   optimizationForSimpleAttributes(currentVNode, newVNode);
   optimizationForClasses(currentVNode, newVNode);
