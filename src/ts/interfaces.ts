@@ -18,7 +18,7 @@ interface IVNode {
 
 interface IHProps {
   events?: { [K in keyof GlobalEventHandlersEventMap]?: EventListener };
-  styles: { [K in keyof CSSStyleDeclaration]?: CSSStyleDeclaration[K] };
+  styles?: { [K in keyof CSSStyleDeclaration]?: CSSStyleDeclaration[K] };
   simpleAttrs?: { [key: string]: string };
   classes?: string[];
 }

@@ -1,14 +1,15 @@
 {
-  "name": "virtual-dom",
-  "version": "0.0.0",
-  "description": "virtual-dom",
+  "name": "virtual-dom-library",
+  "version": "1.0.0",
+  "description": "A virtual DOM library",
   "main": "src/ts/index.js",
   "scripts": {
     "dev": "node -r esm webpack/dev.js",
     "build": "node -r esm webpack/prod.js",
     "lint": "eslint ./src",
     "all-tests": "jest",
-    "e2e-tests": "jest e2e/"
+    "e2e-tests": "jest e2e/",
+    "tsc": "tsc"
   },
   "author": {
     "name": "Ikrom Murodov",
@@ -66,5 +67,7 @@
   "dependencies": {
     "@babel/polyfill": "^7.8.7",
     "core-js": "3"
-  }
+  },
+
+  "keywords": ["virtual", "dom", "patch", "v", "mount", "browser"]
 }
