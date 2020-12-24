@@ -67,3 +67,23 @@ function transformStylesForVNode(
 
   return transformStyles;
 }
+
+/**
+ * This function transform children for a virtual dom.
+ * @param {THChildren} children - Children to be added to the html element.
+ * @returns {TVNodeChildren}
+ */
+function transformChildrenForVNode(children: THChildren): TVNodeChildren {
+  let transformChildren: TVNodeChildren;
+
+  if (Array.isArray(children)) {
+    transformChildren = children.map((child) => {
+      if (typeof child === 'string') return document.createTextNode(child);
+      return child;
+    });
+  } else if (typeof children === 'string') transformChildren = children;
+  else if (children !== null) transformChildren = children;
+  else transformChildren = '';
+
+  return transformChildren;
+}
