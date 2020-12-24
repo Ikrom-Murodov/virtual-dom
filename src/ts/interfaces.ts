@@ -22,3 +22,12 @@ interface IHProps {
   simpleAttrs?: { [key: string]: string };
   classes?: string[];
 }
+
+export {
+  IHProps,
+  IVNode,
+  IVNodeProps,
+  THChildren,
+  TVNodeChildren,
+  TVNodeTagName,
+};
