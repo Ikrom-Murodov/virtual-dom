@@ -88,3 +88,56 @@ function optimizationForSimpleAttributes(
     }
   });
 }
+
+/**
+ * This function removes styles that are not in the new virtual node.
+ *   And if the new virtual node has styles that is in the current one,
+ *   the function checks their values for equality and if their values
+ *   are not equal, the function will overwrite the current values with a new one.
+ *
+ * @param { IVNode } currentVNode - A virtual node that was added to the real DOM using
+ *   the mount function.
+ *
+ * @param { IVNode } newVNode - New virtual node to change the previous one.
+ *
+ * @throws Throws an error if the current virtual node has not been added to
+ *   the current DOM using the mount function
+ *
+ * @returns { void } This function returns nothing.
+ */
+function optimizationForStyles(currentVNode: IVNode, newVNode: IVNode): void {
+  if (currentVNode.$el === undefined) {
+    throw new Error(
+      'First insert the virtual node into the dom using the mount function and then use this function',
+    );
+  }
+
+  newVNode.$el = currentVNode.$el;
+
+  currentVNode.props.styles.forEach((value, property) => {
+    if (property !== 'length' && property !== 'parentRule') {
+      const newValue = newVNode.props.styles.get(property);
+
+      if (newValue) {
+        if (newValue !== value) {
+          // eslint-disable-next-line
+          // @ts-ignore
+          currentVNode.$el.style[property] = newValue;
+        }
+
+        // eslint-disable-next-line
+        // @ts-ignore
+      } else currentVNode.$el.style[property] = '';
+    }
+  });
+
+  newVNode.props.styles.forEach((value, property) => {
+    if (!currentVNode.props.styles.has(property)) {
+      if (property !== 'length' && property !== 'parentRule') {
+        // eslint-disable-next-line
+        // @ts-ignore
+        currentVNode.$el!.style[property] = value;
+      }
+    }
+  });
+}
