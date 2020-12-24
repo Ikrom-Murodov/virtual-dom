@@ -17,3 +17,14 @@ function transformSimpleAttrsForVNode(
 ): IVNodeProps['simpleAttrs'] {
   return new Map<string, string>(Object.entries(simpleAttributes || {}));
 }
+
+/**
+ * This function transform classes for a virtual dom.
+ * @param {IHProps['classes']} classes - Classes to be added to the html element.
+ * @returns {IVNodeProps['classes']}
+ */
+function transformClassesForVNode(
+  classes: IHProps['classes'],
+): IVNodeProps['classes'] {
+  return new Set<string>(classes || []);
+}
