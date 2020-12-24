@@ -141,3 +141,40 @@ function optimizationForStyles(currentVNode: IVNode, newVNode: IVNode): void {
     }
   });
 }
+
+/**
+ * This function removes classes that are not in the new virtual node.
+ *   And if the new virtual node has classes that the current one has,
+ *   the function will not change them.
+ *
+ * @param { IVNode } currentVNode - A virtual node that was added to the real DOM using
+ *   the mount function.
+ *
+ * @param { IVNode } newVNode - New virtual node to change the previous one.
+ *
+ * @throws Throws an error if the current virtual node has not been added to
+ *   the current DOM using the mount function
+ *
+ * @returns { void } This function returns nothing.
+ */
+function optimizationForClasses(currentVNode: IVNode, newVNode: IVNode): void {
+  if (currentVNode.$el === undefined) {
+    throw new Error(
+      'First insert the virtual node into the dom using the mount function and then use this function',
+    );
+  }
+
+  newVNode.$el = currentVNode.$el;
+
+  currentVNode.props.classes.forEach((className) => {
+    if (!newVNode.props.classes.has(className)) {
+      newVNode.$el?.classList.remove(className);
+    }
+  });
+
+  newVNode.props.classes.forEach((className) => {
+    if (!currentVNode.props.classes.has(className)) {
+      newVNode.$el?.classList.add(className);
+    }
+  });
+}
